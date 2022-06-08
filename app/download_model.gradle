@@ -1,0 +1,37 @@
+task downloadEfficientnetLite0(type: Download) {
+    src 'https://tfhub.dev/tensorflow/lite-model/efficientnet/lite0/int8/2?lite-format=tflite'
+    dest project.ext.ASSET_DIR + '/models/classification/efficient_net_lite0.tflite'
+    overwrite false
+}
+task downloadMnasnet(type: Download) {
+    src 'https://tfhub.dev/tensorflow/lite-model/mnasnet_1.3_224/1/metadata/1?lite-format=tflite'
+    dest project.ext.ASSET_DIR + '/models/classification/mnasnet.tflite'
+    overwrite false
+}
+task downloadMobileNetV1Quantized(type: Download) {
+    src 'https://tfhub.dev/tensorflow/lite-model/mobilenet_v1_1.0_224_quantized/1/metadata/1?lite-format=tflite'
+    dest project.ext.ASSET_DIR + '/models/classification/mobilenet_v1_quantized.tflite'
+    overwrite false
+}
+task downloadDeeplabv3(type: Download) {
+    src 'https://tfhub.dev/tensorflow/lite-model/deeplabv3/1/metadata/2?lite-format=tflite'
+    dest project.ext.ASSET_DIR + '/models/image_segmenter/deeplabv3.tflite'
+    overwrite false
+}
+task downloadEfficientnetLite3Detection(type: Download) {
+    src 'https://tfhub.dev/tensorflow/lite-model/efficientdet/lite3/detection/metadata/1?lite-format=tflite'
+    dest project.ext.ASSET_DIR + '/models/object_detection/efficient_net_lite3_detection.tflite'
+    overwrite false
+}
+task downloadSsdMobileNetV1(type: Download) {
+    src 'https://tfhub.dev/tensorflow/lite-model/ssd_mobilenet_v1/1/metadata/2?lite-format=tflite'
+    dest project.ext.ASSET_DIR + '/models/object_detection/ssd_mobilenet_v1.tflite'
+    overwrite false
+}
+
+preBuild.dependsOn downloadEfficientnetLite0
+preBuild.dependsOn downloadMnasnet
+preBuild.dependsOn downloadMobileNetV1Quantized
+preBuild.dependsOn downloadDeeplabv3
+preBuild.dependsOn downloadEfficientnetLite3Detection
+preBuild.dependsOn downloadSsdMobileNetV1
