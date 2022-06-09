@@ -9,9 +9,21 @@ import org.tensorflow.lite.task.vision.detector.ObjectDetector
 class BenchMarkObjectDetectionApi(private val objectDetector: ObjectDetector) : Benchmark {
 
     companion object {
-        fun create(context: Context, modelFile: String): BenchMarkObjectDetectionApi {
+        private const val NUM_CPU_THREAD = 4
+
+        fun create(
+            context: Context,
+            modelFile: String,
+            isUseGpu: Boolean
+        ): BenchMarkObjectDetectionApi {
             val options = ObjectDetector.ObjectDetectorOptions.builder()
-                .setBaseOptions(BaseOptions.builder().useGpu().build())
+                .setBaseOptions(BaseOptions.builder().apply {
+                    if (isUseGpu) {
+                        useGpu()
+                    } else {
+                        setNumThreads(NUM_CPU_THREAD)
+                    }
+                }.build())
                 .build()
             val objectDetector = ObjectDetector.createFromFileAndOptions(
                 context, modelFile, options

@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.work.*
+import org.tensorflow.lite.examples.androidbenchmark.MainActivity.Companion.USE_GPU
 import org.tensorflow.lite.examples.androidbenchmark.model.ModelType
 import org.tensorflow.lite.examples.androidbenchmark.model.TfliteModel
 import org.tensorflow.lite.examples.lib_interpreter.BenchmarkInterpreter
@@ -25,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val NUMBER_OF_BENCHMARK = 50
+        const val USE_GPU = true
         val models = listOf(
             TfliteModel(
                 "efficientnet_lite0",
@@ -73,6 +75,30 @@ class MainActivity : AppCompatActivity() {
                 300,
                 InputDataType.UINT8,
                 ModelType.DETECTION
+            ),
+            TfliteModel(
+                "EfficientnetLite4fp32",
+                "models/classification/efficientnet_lite4_fp32.tflite",
+                300,
+                300,
+                InputDataType.FLOAT32,
+                ModelType.CLASSIFICATION
+            ),
+            TfliteModel(
+                "EfficientnetLite4int8",
+                "models/classification/efficientnet_lite4_int8.tflite",
+                300,
+                300,
+                InputDataType.UINT8,
+                ModelType.CLASSIFICATION
+            ),
+            TfliteModel(
+                "EfficientnetLite4uint8",
+                "models/classification/efficientnet_lite4_uint8.tflite",
+                300,
+                300,
+                InputDataType.UINT8,
+                ModelType.CLASSIFICATION
             )
         )
 
@@ -96,7 +122,6 @@ class MainActivity : AppCompatActivity() {
 
         val btnBenchMarkInterpreter = findViewById<Button>(R.id.btnBenchMarkInterpreter)
         val btnBenchMarkTaskApi = findViewById<Button>(R.id.btnBenchMarkTaskApi)
-
         val workManager = WorkManager.getInstance(this)
 
         btnBenchMarkInterpreter.setOnClickListener {
@@ -163,7 +188,8 @@ class BenchmarkInterpreterWorker(appContext: Context, workerParams: WorkerParame
             applicationContext, model.path,
             model.inputWidth,
             model.inputHeight,
-            model.inputDataType
+            model.inputDataType,
+            USE_GPU
         )
         val executeTimes = mutableListOf<Long>()
         (0 until MainActivity.NUMBER_OF_BENCHMARK).forEach { _ ->
@@ -199,13 +225,15 @@ class BenchmarkTaskApiWorker(appContext: Context, workerParams: WorkerParameters
         val benchMark = when (model.modelType) {
             ModelType.CLASSIFICATION -> BenchMarkImageClassificationApi.create(
                 applicationContext,
-                model.path
+                model.path,
+                USE_GPU
             )
             ModelType.SEGMENTATION -> BenchMarkImageSegmenterApi.create(
                 applicationContext,
-                model.path
+                model.path,
+                USE_GPU
             )
-            else -> BenchMarkObjectDetectionApi.create(applicationContext, model.path)
+            else -> BenchMarkObjectDetectionApi.create(applicationContext, model.path, USE_GPU)
         }
         val executeTimes = mutableListOf<Long>()
         (0 until MainActivity.NUMBER_OF_BENCHMARK).forEach { _ ->

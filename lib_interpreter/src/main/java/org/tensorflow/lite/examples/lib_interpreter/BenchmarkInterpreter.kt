@@ -21,19 +21,24 @@ class BenchmarkInterpreter(
     private val outputShape = interpreter.getOutputTensor(0).shape()
 
     companion object {
-        private val compatList = CompatibilityList()
-
+        private const val NUM_CPU_THREAD = 4
         fun create(
             context: Context,
             filePath: String,
             width: Int,
             height: Int,
-            dataType: InputDataType
+            dataType: InputDataType,
+            isUseGpu: Boolean
         ): BenchmarkInterpreter {
             val byteBuffer = FileUtil.loadMappedFile(context, filePath)
+            val compatList = CompatibilityList()
             val options = Interpreter.Options().apply {
-                val delegateOptions = compatList.bestOptionsForThisDevice
-                addDelegate(GpuDelegate(delegateOptions))
+                if (isUseGpu) {
+                    val delegateOptions = compatList.bestOptionsForThisDevice
+                    addDelegate(GpuDelegate(delegateOptions))
+                } else {
+                    numThreads = NUM_CPU_THREAD
+                }
             }
             val interpreter = Interpreter(byteBuffer, options)
             return BenchmarkInterpreter(

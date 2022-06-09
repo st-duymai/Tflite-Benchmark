@@ -9,9 +9,22 @@ import org.tensorflow.lite.task.vision.classifier.ImageClassifier
 class BenchMarkImageClassificationApi(private val objectDetector: ImageClassifier) : Benchmark {
 
     companion object {
-        fun create(context: Context, modelFile: String): BenchMarkImageClassificationApi {
+
+        private const val NUM_CPU_THREAD = 4
+
+        fun create(
+            context: Context,
+            modelFile: String,
+            isUseGpu: Boolean
+        ): BenchMarkImageClassificationApi {
             val options = ImageClassifier.ImageClassifierOptions.builder()
-                .setBaseOptions(BaseOptions.builder().useGpu().build())
+                .setBaseOptions(BaseOptions.builder().apply {
+                    if (isUseGpu) {
+                        useGpu()
+                    } else {
+                        setNumThreads(NUM_CPU_THREAD)
+                    }
+                }.build())
                 .build()
             val objectDetector = ImageClassifier.createFromFileAndOptions(
                 context, modelFile, options

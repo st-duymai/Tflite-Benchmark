@@ -28,6 +28,21 @@ task downloadSsdMobileNetV1(type: Download) {
     dest project.ext.ASSET_DIR + '/models/object_detection/ssd_mobilenet_v1.tflite'
     overwrite false
 }
+task downloadEfficientnetLite4fp32(type: Download) {
+    src 'https://tfhub.dev/tensorflow/lite-model/efficientnet/lite4/fp32/2?lite-format=tflite'
+    dest project.ext.ASSET_DIR + '/models/classification/efficientnet_lite4_fp32.tflite'
+    overwrite false
+}
+task downloadEfficientnetLite4int8(type: Download) {
+    src 'https://tfhub.dev/tensorflow/lite-model/efficientnet/lite4/int8/2?lite-format=tflite'
+    dest project.ext.ASSET_DIR + '/models/classification/efficientnet_lite4_int8.tflite'
+    overwrite false
+}
+task downloadEfficientnetLite4uint8(type: Download) {
+    src 'https://tfhub.dev/tensorflow/lite-model/efficientnet/lite4/uint8/2?lite-format=tflite'
+    dest project.ext.ASSET_DIR + '/models/classification/efficientnet_lite4_uint8.tflite'
+    overwrite false
+}
 
 preBuild.dependsOn downloadEfficientnetLite0
 preBuild.dependsOn downloadMnasnet
@@ -35,3 +50,6 @@ preBuild.dependsOn downloadMobileNetV1Quantized
 preBuild.dependsOn downloadDeeplabv3
 preBuild.dependsOn downloadEfficientnetLite3Detection
 preBuild.dependsOn downloadSsdMobileNetV1
+preBuild.dependsOn downloadEfficientnetLite4fp32
+preBuild.dependsOn downloadEfficientnetLite4int8
+preBuild.dependsOn downloadEfficientnetLite4uint8
