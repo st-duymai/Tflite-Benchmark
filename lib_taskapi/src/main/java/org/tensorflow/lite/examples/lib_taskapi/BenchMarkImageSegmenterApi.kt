@@ -6,7 +6,7 @@ import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.task.core.BaseOptions
 import org.tensorflow.lite.task.vision.segmenter.ImageSegmenter
 
-class BenchMarkImageSegmenterApi(private val objectDetector: ImageSegmenter) : Benchmark {
+class BenchMarkImageSegmenterApi(private val imageSegmenter: ImageSegmenter) : Benchmark {
 
     companion object {
         private const val NUM_CPU_THREAD = 4
@@ -34,11 +34,11 @@ class BenchMarkImageSegmenterApi(private val objectDetector: ImageSegmenter) : B
     override fun benchmark(bitmap: Bitmap): Long {
         val tensor = TensorImage.fromBitmap(bitmap)
         val startTime = System.nanoTime()
-        objectDetector.segment(tensor)
+        imageSegmenter.segment(tensor)
         return (System.nanoTime() - startTime) / 1000000 // convert nanosecond to milisecond
     }
 
     override fun close() {
-        objectDetector.close()
+        imageSegmenter.close()
     }
 }
