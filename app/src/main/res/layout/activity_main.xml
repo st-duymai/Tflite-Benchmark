@@ -12,14 +12,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Benchmark Interpreter" />
-
-    <Button
-        android:id="@+id/btnBenchMarkTaskApi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btnBenchMarkInterpreter"
-        android:layout_centerHorizontal="true"
-        android:text="Benchmark TaskApi" />
+        android:text="Start benchmark Interpreter" />
 
 </RelativeLayout>

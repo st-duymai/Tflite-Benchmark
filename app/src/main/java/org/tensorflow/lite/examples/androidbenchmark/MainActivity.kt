@@ -52,30 +52,30 @@ class MainActivity : AppCompatActivity() {
                 InputDataType.UINT8,
                 ModelType.CLASSIFICATION
             ),
-            TfliteModel(
-                "deeplabv3",
-                "models/image_segmenter/deeplabv3.tflite",
-                257,
-                257,
-                InputDataType.FLOAT32,
-                ModelType.SEGMENTATION
-            ),
-            TfliteModel(
-                "efficientdet_lite3_detection",
-                "models/object_detection/efficient_net_lite3_detection.tflite",
-                512,
-                512,
-                InputDataType.UINT8,
-                ModelType.DETECTION
-            ),
-            TfliteModel(
-                "ssd_mobilenet_v1",
-                "models/object_detection/ssd_mobilenet_v1.tflite",
-                300,
-                300,
-                InputDataType.UINT8,
-                ModelType.DETECTION
-            ),
+//            TfliteModel(
+//                "deeplabv3",
+//                "models/image_segmenter/deeplabv3.tflite",
+//                257,
+//                257,
+//                InputDataType.FLOAT32,
+//                ModelType.SEGMENTATION
+//            ),
+//            TfliteModel(
+//                "efficientdet_lite3_detection",
+//                "models/object_detection/efficient_net_lite3_detection.tflite",
+//                512,
+//                512,
+//                InputDataType.UINT8,
+//                ModelType.DETECTION
+//            ),
+//            TfliteModel(
+//                "ssd_mobilenet_v1",
+//                "models/object_detection/ssd_mobilenet_v1.tflite",
+//                300,
+//                300,
+//                InputDataType.UINT8,
+//                ModelType.DETECTION
+//            ),
             TfliteModel(
                 "EfficientnetLite4fp32",
                 "models/classification/efficientnet_lite4_fp32.tflite",
@@ -121,25 +121,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val btnBenchMarkInterpreter = findViewById<Button>(R.id.btnBenchMarkInterpreter)
-        val btnBenchMarkTaskApi = findViewById<Button>(R.id.btnBenchMarkTaskApi)
         val workManager = WorkManager.getInstance(this)
 
         btnBenchMarkInterpreter.setOnClickListener {
             val benchmarkInterpreter =
-                OneTimeWorkRequestBuilder<BenchmarkInterpreterWorker>().build()
+                OneTimeWorkRequestBuilder<BenchmarkWorker>().build()
             workManager.getWorkInfoByIdLiveData(benchmarkInterpreter.id).observe(this) {
                 handleWorkState(it.state)
             }
             workManager.enqueue(benchmarkInterpreter)
-        }
-
-        btnBenchMarkTaskApi.setOnClickListener {
-            val benchmarkTaskApi =
-                OneTimeWorkRequestBuilder<BenchmarkTaskApiWorker>().build()
-            workManager.getWorkInfoByIdLiveData(benchmarkTaskApi.id).observe(this) {
-                handleWorkState(it.state)
-            }
-            workManager.enqueue(benchmarkTaskApi)
         }
     }
 
@@ -162,10 +152,11 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class BenchmarkInterpreterWorker(appContext: Context, workerParams: WorkerParameters) :
+class BenchmarkWorker(appContext: Context, workerParams: WorkerParameters) :
     Worker(appContext, workerParams) {
     companion object {
-        private const val TAG = "Interpreter Execute time:"
+        private const val TAG_1 = "Interpreter execute time:"
+        private const val TAG_2 = "Task Api execute time:"
     }
 
     override fun doWork(): Result {
@@ -174,8 +165,9 @@ class BenchmarkInterpreterWorker(appContext: Context, workerParams: WorkerParame
                 ?.let { image ->
                     MainActivity.models.forEach { model ->
                         benchMarkInterpreter(model, image)
+                        benchMarkTaskApi(model, image)
                     }
-                    Log.d("$TAG:", "Done")
+                    Log.d("Benchmark execute:", "Done")
                 }
             Result.success()
         } catch (e: Exception) {
@@ -195,30 +187,8 @@ class BenchmarkInterpreterWorker(appContext: Context, workerParams: WorkerParame
         (0 until MainActivity.NUMBER_OF_BENCHMARK).forEach { _ ->
             executeTimes.add(benchMark.benchmark(bitmap))
         }
-        Log.d("$TAG ${model.name}:", "${executeTimes.average().toInt()}ms")
+        Log.d("$TAG_1 ${model.name}:", "${executeTimes.average().toInt()}ms")
         benchMark.close()
-    }
-}
-
-class BenchmarkTaskApiWorker(appContext: Context, workerParams: WorkerParameters) :
-    Worker(appContext, workerParams) {
-    companion object {
-        private const val TAG = "Task Api Execute time:"
-    }
-
-    override fun doWork(): Result {
-        return try {
-            MainActivity.getBitmapFromAsset(applicationContext, "images/img_object.jpeg")
-                ?.let { image ->
-                    MainActivity.models.forEach { model ->
-                        benchMarkTaskApi(model, image)
-                    }
-                    Log.d("$TAG:", "Done")
-                }
-            Result.success()
-        } catch (e: Exception) {
-            Result.failure()
-        }
     }
 
     private fun benchMarkTaskApi(model: TfliteModel, bitmap: Bitmap) {
@@ -239,7 +209,7 @@ class BenchmarkTaskApiWorker(appContext: Context, workerParams: WorkerParameters
         (0 until MainActivity.NUMBER_OF_BENCHMARK).forEach { _ ->
             executeTimes.add(benchMark.benchmark(bitmap))
         }
-        Log.d("$TAG ${model.name}:", "${executeTimes.average().toInt()}ms")
+        Log.d("$TAG_2 ${model.name}:", "${executeTimes.average().toInt()}ms")
         benchMark.close()
     }
 }
