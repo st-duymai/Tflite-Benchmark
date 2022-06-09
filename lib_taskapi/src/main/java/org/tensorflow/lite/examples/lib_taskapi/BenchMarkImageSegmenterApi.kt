@@ -21,8 +21,9 @@ class BenchMarkImageSegmenterApi(private val objectDetector: ImageSegmenter) : B
     }
 
     override fun benchmark(bitmap: Bitmap): Long {
+        val tensor = TensorImage.fromBitmap(bitmap)
         val startTime = System.nanoTime()
-        objectDetector.segment(TensorImage.fromBitmap(bitmap))
+        objectDetector.segment(tensor)
         return (System.nanoTime() - startTime) / 1000000 // convert nanosecond to milisecond
     }
 
