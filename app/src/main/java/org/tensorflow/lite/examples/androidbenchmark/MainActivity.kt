@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val NUMBER_OF_BENCHMARK = 50
-        const val USE_GPU = true
+        const val USE_GPU = false
         val models = listOf(
             TfliteModel(
                 "efficientnet_lite0",
@@ -52,30 +52,30 @@ class MainActivity : AppCompatActivity() {
                 InputDataType.UINT8,
                 ModelType.CLASSIFICATION
             ),
-//            TfliteModel(
-//                "deeplabv3",
-//                "models/image_segmenter/deeplabv3.tflite",
-//                257,
-//                257,
-//                InputDataType.FLOAT32,
-//                ModelType.SEGMENTATION
-//            ),
-//            TfliteModel(
-//                "efficientdet_lite3_detection",
-//                "models/object_detection/efficient_net_lite3_detection.tflite",
-//                512,
-//                512,
-//                InputDataType.UINT8,
-//                ModelType.DETECTION
-//            ),
-//            TfliteModel(
-//                "ssd_mobilenet_v1",
-//                "models/object_detection/ssd_mobilenet_v1.tflite",
-//                300,
-//                300,
-//                InputDataType.UINT8,
-//                ModelType.DETECTION
-//            ),
+            TfliteModel(
+                "deeplabv3",
+                "models/image_segmenter/deeplabv3.tflite",
+                257,
+                257,
+                InputDataType.FLOAT32,
+                ModelType.SEGMENTATION
+            ),
+            TfliteModel(
+                "efficientdet_lite3_detection",
+                "models/object_detection/efficient_net_lite3_detection.tflite",
+                512,
+                512,
+                InputDataType.UINT8,
+                ModelType.DETECTION
+            ),
+            TfliteModel(
+                "ssd_mobilenet_v1",
+                "models/object_detection/ssd_mobilenet_v1.tflite",
+                300,
+                300,
+                InputDataType.UINT8,
+                ModelType.DETECTION
+            ),
             TfliteModel(
                 "EfficientnetLite4fp32",
                 "models/classification/efficientnet_lite4_fp32.tflite",
