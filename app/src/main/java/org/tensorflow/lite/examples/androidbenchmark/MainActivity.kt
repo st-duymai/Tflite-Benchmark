@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
                 ModelType.DETECTION
             ),
             TfliteModel(
-                "EfficientnetLite4fp32",
+                "efficientnet_lite4_fp32",
                 "models/classification/efficientnet_lite4_fp32.tflite",
                 300,
                 300,
@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
                 ModelType.CLASSIFICATION
             ),
             TfliteModel(
-                "EfficientnetLite4int8",
+                "efficientnet_lite4_int8",
                 "models/classification/efficientnet_lite4_int8.tflite",
                 300,
                 300,
@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                 ModelType.CLASSIFICATION
             ),
             TfliteModel(
-                "EfficientnetLite4uint8",
+                "efficientnet_lite4_uint8",
                 "models/classification/efficientnet_lite4_uint8.tflite",
                 300,
                 300,
