@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val NUMBER_OF_BENCHMARK = 50
-        const val USE_GPU = false
+        const val USE_GPU = true
         val models = listOf(
             TfliteModel(
                 "efficientnet_lite0",
@@ -155,8 +155,8 @@ class MainActivity : AppCompatActivity() {
 class BenchmarkWorker(appContext: Context, workerParams: WorkerParameters) :
     Worker(appContext, workerParams) {
     companion object {
-        private const val TAG_1 = "Interpreter execute time:"
-        private const val TAG_2 = "Task Api execute time:"
+        private const val TAG_1 = "Interpreter"
+        private const val TAG_2 = "Task Api"
     }
 
     override fun doWork(): Result {
@@ -184,10 +184,14 @@ class BenchmarkWorker(appContext: Context, workerParams: WorkerParameters) :
             USE_GPU
         )
         val executeTimes = mutableListOf<Long>()
-        (0 until MainActivity.NUMBER_OF_BENCHMARK).forEach { _ ->
+        (0..MainActivity.NUMBER_OF_BENCHMARK).forEach { _ ->
             executeTimes.add(benchMark.benchmark(bitmap))
         }
-        Log.d("$TAG_1 ${model.name}:", "${executeTimes.average().toInt()}ms")
+        executeTimes.removeAt(0)
+
+        val result = CalculateUtils.calculateStandardDeviation(executeTimes)
+        Log.d("$TAG_1 average time ${model.name}:", "${result.first.toInt()}ms")
+        Log.d("$TAG_1 standard deviation ${model.name}:", "${result.second.toInt()}ms")
         benchMark.close()
     }
 
@@ -206,10 +210,14 @@ class BenchmarkWorker(appContext: Context, workerParams: WorkerParameters) :
             else -> BenchMarkObjectDetectionApi.create(applicationContext, model.path, USE_GPU)
         }
         val executeTimes = mutableListOf<Long>()
-        (0 until MainActivity.NUMBER_OF_BENCHMARK).forEach { _ ->
+        (0..MainActivity.NUMBER_OF_BENCHMARK).forEach { _ ->
             executeTimes.add(benchMark.benchmark(bitmap))
         }
-        Log.d("$TAG_2 ${model.name}:", "${executeTimes.average().toInt()}ms")
+        executeTimes.removeAt(0)
+
+        val result = CalculateUtils.calculateStandardDeviation(executeTimes)
+        Log.d("$TAG_2 average time ${model.name}:", "${result.first.toInt()}ms")
+        Log.d("$TAG_2 standard deviation ${model.name}:", "${result.second.toInt()}ms")
         benchMark.close()
     }
 }

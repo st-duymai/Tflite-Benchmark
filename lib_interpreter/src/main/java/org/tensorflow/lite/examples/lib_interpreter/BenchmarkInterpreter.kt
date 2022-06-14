@@ -51,9 +51,9 @@ class BenchmarkInterpreter(
     }
 
     override fun benchmark(bitmap: Bitmap): Long {
+        val startTime = System.nanoTime()
         val inputTensor = prepareImageTensor(bitmap)
         val outputTensor = TensorBuffer.createFixedSize(outputShape, DataType.FLOAT32)
-        val startTime = System.nanoTime()
         interpreter.run(inputTensor?.buffer, outputTensor.buffer.rewind())
         return (System.nanoTime() - startTime) / 1000000 // convert nanosecond to milisecond
     }

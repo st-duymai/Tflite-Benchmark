@@ -34,8 +34,8 @@ class BenchMarkImageClassificationApi(private val imageClassifier: ImageClassifi
     }
 
     override fun benchmark(bitmap: Bitmap): Long {
-        val tensor = TensorImage.fromBitmap(bitmap)
         val startTime = System.nanoTime()
+        val tensor = TensorImage.fromBitmap(bitmap)
         imageClassifier.classify(tensor)
         return (System.nanoTime() - startTime) / 1000000 // convert nanosecond to milisecond
     }
